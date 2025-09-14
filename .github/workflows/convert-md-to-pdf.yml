@@ -17,39 +17,36 @@ jobs:
       - name: 检出仓库
         uses: actions/checkout@v4
 
-      # 步骤2：安装 Pandoc、LaTeX 和中文字体支持
-      - name: 安装 Pandoc 和 LaTeX (含中文支持)
+      # 步骤2：安装完整的 TeX Live 发行版（包含 xelatex）
+      - name: 安装完整的 TeX Live 和 Pandoc
         run: |
           sudo apt-get update
+          # 安装完整的 texlive 发行版，确保包含 xelatex
           sudo apt-get install -y \
             pandoc \
-            texlive-latex-base \
-            texlive-fonts-recommended \
-            texlive-latex-extra \
-            texlive-lang-chinese \
-            fonts-noto-cjk
+            texlive-full \
+            fonts-noto-cjk \
+            fonts-noto
 
-      # 步骤3：将 Markdown 转换为 PDF（支持中文）
+      # 步骤3：验证 xelatex 是否安装成功
+      - name: 验证 xelatex 安装
+        run: |
+          which xelatex
+          xelatex --version
+
+      # 步骤4：将 Markdown 转换为 PDF（支持中文）
       - name: 转换 Markdown 为 PDF
         run: |
           pandoc Menu.md \
             -o Menu.pdf \
             --pdf-engine=xelatex \
             -V mainfont="Noto Serif CJK SC" \
-            -V geometry:margin=1in
+            -V geometry:margin=1in \
+            --verbose
 
-      # 步骤4：上传生成的 PDF 作为构建产物
+      # 步骤5：上传生成的 PDF 作为构建产物
       - name: 上传 PDF 产物
         uses: actions/upload-artifact@v4
         with:
           name: Menu-PDF
           path: Menu.pdf
-
-      # 【可选】步骤5：将 PDF 提交回仓库
-      # - name: 提交并推送 PDF
-      #   run: |
-      #     git config --global user.name 'github-actions[bot]'
-      #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-      #     git add Menu.pdf
-      #     git commit -m "CI: 自动生成 PDF" || echo "没有更改可提交"
-      #     git push

@@ -37,17 +37,21 @@ jobs:
       # 步骤4：将 Markdown 转换为 PDF（支持中文）
       - name: 转换 Markdown 为 PDF
         run: |
+          # 创建一个临时的 LaTeX 头文件
+          cat > chinese-header.tex << 'EOF'
+          \usepackage{xeCJK}
+          \setCJKmainfont{Noto Serif CJK SC}
+          \XeTeXlinebreaklocale "zh"
+          \XeTeXlinebreakskip = 0pt plus 1pt
+          \setlength{\parindent}{2em} % 设置中文段落缩进
+          EOF
+      
           pandoc Menu.md \
             -o Menu.pdf \
             --pdf-engine=xelatex \
             -V mainfont="Noto Serif CJK SC" \
             -V geometry:margin=1in \
-            --include-in-header=<(echo '
-      \usepackage{xeCJK}
-      \setCJKmainfont{Noto Serif CJK SC}
-      \XeTeXlinebreaklocale "zh"
-      \XeTeXlinebreakskip = 0pt plus 1pt
-      ')
+            -H chinese-header.tex
 
       # 步骤5：上传生成的 PDF 作为构建产物
       - name: 上传 PDF 产物

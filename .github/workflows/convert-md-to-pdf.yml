@@ -42,7 +42,12 @@ jobs:
             --pdf-engine=xelatex \
             -V mainfont="Noto Serif CJK SC" \
             -V geometry:margin=1in \
-            --verbose
+            --include-in-header=<(echo '
+      \usepackage{xeCJK}
+      \setCJKmainfont{Noto Serif CJK SC}
+      \XeTeXlinebreaklocale "zh"
+      \XeTeXlinebreakskip = 0pt plus 1pt
+      ')
 
       # 步骤5：上传生成的 PDF 作为构建产物
       - name: 上传 PDF 产物

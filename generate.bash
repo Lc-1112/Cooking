@@ -10,6 +10,9 @@ OUTPUT_FILE="Menu.pdf"
 # 运行 pandoc 命令
 pandoc "$INPUT_FILE" -o "$OUTPUT_FILE" \
 --pdf-engine=xelatex \
+--toc \
+--toc-depth=3 \
+-V toc-title="目录" \
 -V CJKmainfont="仿宋" \
 -V geometry:"left=1cm,right=1cm,top=1cm,bottom=1.5cm"
 
